@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+  <style type="text/css">
+    .orderform {
+      display: none;
+    }
+  </style>
+  <title></title>
+
+  <script type='text/javascript'>//<![CDATA[
+    var VanillaRunOnDomReady = function() {
+    $('p.endcost').text('jquery is running') // test if jquery working
+    var boost_cost = [
+    [ /* Bronze	*/
+      16, /* Division 5	*/
+      16, /* Division 4	*/
+      16, /* Division 3	*/
+      16, /* Division 2 */
+      20 /* Division 1 ->silver 5*/
+    ],
+    [ /* Silver	*/
+      20, /* Division 5	*/
+      20, /* Division 4	*/
+      20, /* Division 3	*/
+      20, /* Division 2	*/
+      28 /* Division 1	*/
+    ],
+    [ /* Gold */
+      32, /* Division 5	*/
+      32, /* Division 4	*/
+      32, /* Division 3	*/
+      32, /* Division 2	*/
+      40 /* Division 1	*/
+    ],
+    [ /* Platinum */
+      50, /* Division 5	*/
+      52, /* Division 4 */
+      54, /* Division 3 */
+      56, /* Division 2 */
+      60 /* Division 1	*/
+    ],
+    [ /* Diamond */
+      110, /* Division 5	*/
+      125, /* Division 4 */
+      140, /* Division 3 */
+      175, /* Division 2 */
+      300 /* Division 1	*/
+    ]
+    ];
+    var validboost = true;
+    $(":input").change(function() {
+    var price = 0;
+    var srank = startrank.value;
+    var erank = endrank.value;
+    var sdiv = startdivision.value;
+    var ediv = enddivision.value;
+
+    price = 0;
+    $("p.value").text("Value Changed")
+
+    if (sdiv > ediv) {
+      $('p.endcost').text('invalid selection')
+      validboost = false;
+    } else if ((sdiv == ediv) && (srank >= erank)) {
+      $('p.endcost').text('invalid selection')
+      validboost = false;
+    } else { //if the end result is higher, boost is valid and checks price
+      for (; sdiv < ediv; sdiv++) {
+        for (x = srank; x < 5; x++) {
+          var y = boost_cost[sdiv][x];
+          price = price + y;
+        };
+        srank = 0;
+      };
+      if (sdiv == ediv) {
+        $('p.debug').text("startdiv is same as end div")
+        for (x = srank; x < erank; x++) {
+          var y = boost_cost[sdiv][x];
+          price = price + y;
+        };
+        validboost = true;
+        $('p.endcost').text("Total Price:" + price)
+        $("input.amount").val(price);
+
+        var sranks = $("#startrank option:selected").text();
+        var eranks = $("#endrank option:selected").text();
+        var sdivs = $("#startdivision option:selected").text();
+        var edivs = $("#enddivision option:selected").text();
+        $("input.item_name").val(sdivs + " " + sranks + " to " + edivs + " " + eranks);
+      }
+    }
+  });
+  $(":input").trigger("change");
+  $("button.submit").click(function() {
+    $(".orderform").show();
+  });
+
+}
+
+var alreadyrunflag = 0;
+
+if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", function(){
+        alreadyrunflag=1;
+        VanillaRunOnDomReady();
+    }, false);
+else if (document.all && !window.opera) {
+    document.write('<script type="text/javascript" id="contentloadtag" defer="defer" src="javascript:void(0)"><\/script>');
+    var contentloadtag = document.getElementById("contentloadtag")
+    contentloadtag.onreadystatechange=function(){
+        if (this.readyState=="complete"){
+            alreadyrunflag=1;
+            VanillaRunOnDomReady();
+        }
+    }
+}
+
+window.onload = function(){
+  setTimeout("if (!alreadyrunflag){VanillaRunOnDomReady}", 0);
+}//]]>
+
+</script>
+
+
+</head>
+
+<body>
+  <body>
+  <select name="startdivision" id="startdivision">
+    <option value="0">Bronze</option>
+    <option selected value="1">Silver</option>
+    <option value="2">Gold</option>
+    <option value="3">Platinum</option>
+    <option value="4">Diamond</option>
+  </select>
+  <select name="startrank" id="startrank">
+    <option value="0">V</option>
+    <option value="1">IV</option>
+    <option value="2">III</option>
+    <option value="3">II</option>
+    <option value="4">I</option>
+  </select>
+
+  <select name="enddivision" id="enddivision">
+    <option value="0">Bronze</option>
+    <option selected value="1">Silver</option>
+    <option value="2">Gold</option>
+    <option value="3">Platinum</option>
+    <option value="4">Diamond</option>
+  </select>
+  <select name="endrank" id="endrank">
+    <option value="0">V</option>
+    <option selected value="1">IV</option>
+    <option value="2">III</option>
+    <option value="3">II</option>
+    <option value="4">I</option>
+  </select>
+  <p class="endcost">jquery not running</p>
+  <p class="value">Value same</p>
+  <p class="debug">l</p>
+  <button class="submit">Order Now!</button>
+</body>
+<div class="orderform">
+  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+    <input type="hidden" name="cmd" value="_xclick">
+    <input type="hidden" name="business" value="2DFPXNH3S8JYY">
+    <input type="hidden" name="lc" value="AU">
+    <input type="hidden" class="item_name" name="item_name" value="boost">
+    <input type="hidden" class="amount" name="amount" value="1.00">
+    <input type="hidden" name="currency_code" value="USD">
+    <input type="hidden" name="button_subtype" value="services">
+    <input type="hidden" name="no_note" value="0">
+    <input type="hidden" name="cn" value="Add special instructions to the seller:">
+    <input type="hidden" name="no_shipping" value="2">
+    <input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted">
+    <table>
+      <tr>
+        <td>
+          <input type="hidden" name="on0" value="Server">Server</td>
+      </tr>
+      <tr>
+        <td>
+          <select name="os0">
+            <option value="NA">NA </option>
+            <option value="OCE">OCE </option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="hidden" name="on1" value="Username">Username</td>
+      </tr>
+      <tr>
+        <td>
+          <input type="text" name="os1" maxlength="200" required>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="hidden" name="on2" value="Password">Password</td>
+      </tr>
+      <tr>
+        <td>
+          <input type="text" name="os2" maxlength="200">
+        </td>
+      </tr>
+    </table>
+    In Game Name
+    <br>
+    <input type="hidden" name="on3" value="Event">
+    <input type="text" name="os3" size="20">
+    <br> Email
+    <br>
+    <input type="hidden" name="on4" value="Date">
+    <input type="email" name="os4" size="20">
+    <br>
+    <p class="endcost"></p>
+    <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
+    <img alt="" border="0" src="https://www.paypalobjects.com/en_AU/i/scr/pixel.gif" width="1" height="1">
+  </form>
+</div>
+</body>
